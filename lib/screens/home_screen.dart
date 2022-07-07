@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:khatabook_clone/user_model.dart';
 import 'login_screen.dart';
+import 'package:flutter/src/rendering/box.dart';
 
 
 
@@ -31,6 +32,7 @@ class _HomeState extends State<Home> {
       setState(() {});
     });
   }
+  final List<People> _people = <People>[];
 
 
   @override
@@ -127,7 +129,7 @@ class _HomeState extends State<Home> {
 
 
               child: Column(
-                mainAxisSize: MainAxisSize.max,
+                // mainAxisSize: MainAxisSize.max,
                 children: [
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -207,12 +209,17 @@ class _HomeState extends State<Home> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                Text('VIEW REPORT ',
-                                style: TextStyle(
-                                  color: Colors.blue,
-                                  fontSize: 18
-                                    ,fontWeight: FontWeight.bold,
-                                ),),
+                                GestureDetector(
+                                  onTap: (){
+                                    Navigator.pushNamed(context, '/transactions');
+                                  },
+                                  child: Text('VIEW REPORT ',
+                                  style: TextStyle(
+                                    color: Colors.blue,
+                                    fontSize: 18
+                                      ,fontWeight: FontWeight.bold,
+                                  ),),
+                                ),
                                 Icon(Icons.arrow_forward_ios_outlined,
                                 size: 18,
                                 color: Colors.blue,
@@ -224,7 +231,79 @@ class _HomeState extends State<Home> {
 
                       ),
                     ),
-                  )
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric( vertical: 16),
+                    child: Material(
+                      // borderRadius: BorderRadius.all(Radius.circular(8)),
+                      child: Container(
+
+                        decoration: BoxDecoration(
+                            color: Colors.white70,
+                            borderRadius: BorderRadius.all(Radius.circular(10))
+                        ),
+                        // height: 130,
+                        width: double.infinity,
+
+                        child: Column(
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            IntrinsicHeight(
+
+                              child: Row(crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                children: [
+                                 Padding(
+                                   padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
+                                   child: Container(
+
+
+                                     decoration: BoxDecoration(
+                                       color: Colors.white,
+                                       border: Border.all(color: Colors.grey),
+                                       borderRadius: BorderRadius.all(Radius.circular(10))
+                                     ),
+                                     height: 40,
+                                     width: MediaQuery.of(context).size.width*0.7,
+                                     child: TextFormField(
+
+                                       decoration: InputDecoration(
+
+                                         prefixIcon: Icon(Icons.search),
+                                         hintText: 'Search Customer',
+                                           hintStyle: TextStyle(
+                                               color: Colors.grey
+                                           ),
+                                         border: InputBorder.none
+
+                                       ),
+                                     ),
+                                     
+                                   ),
+                                   
+                                 ),
+                                  Icon(Icons.filter_alt_outlined,
+                                  color: Colors.blue,
+                                  size: 30,),
+                                  Icon(Icons.picture_as_pdf_outlined,
+                                  size: 28,
+                                  color: Colors.blue,)
+
+                                ],
+                              ),
+                            ),
+                            Divider(height: 16,
+                              color: Colors.black38,),
+
+                          ],
+                        ),
+
+                      ),
+                    ),
+                  ),
+
+
                 ],
 
               ),
@@ -249,5 +328,19 @@ class _HomeState extends State<Home> {
     Fluttertoast.showToast(msg: 'Logged out');
     print('logged out');
     Navigator.pushReplacementNamed(context, '/login');
+  }
+
+
+
+
+
+}
+
+class People extends StatelessWidget {
+  const People({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container();
   }
 }

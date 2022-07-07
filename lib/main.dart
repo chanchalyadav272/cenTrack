@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
         '/login': (context) => Login(),
         '/signup': (context) => SignUp(),
         '/home': (context) => Home(),
-        '/transactoins': (context) => Transactions(),
+        '/transactions': (context) => Transactions(),
         '/addnew' : (context) => AddNew(),
       },
       home: StreamBuilder(
