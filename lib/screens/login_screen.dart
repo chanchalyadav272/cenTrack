@@ -2,6 +2,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:khatabook_clone/screens/home_screen.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+
+
+
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
@@ -12,8 +16,13 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   final _formkey = GlobalKey<FormState>();
-  final _emailcontroller = TextEditingController();
-  final _passwordcontroller = TextEditingController();
+  final emailcontroller = new TextEditingController();
+  final passwordcontroller = new TextEditingController();
+
+  final _auth = FirebaseAuth.instance;
+
+
+
   bool loading =false;
   String errorMessage = "";
   @override
@@ -54,14 +63,18 @@ class _LoginState extends State<Login> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          Container(
-                            height: 350,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.all(Radius.circular(10)),
-                            color: Colors.white70
-                          ),
+                          Flexible(
+                            flex: 1,
+                            fit: FlexFit.loose,
+                            child: Container(
+                              height: 400,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.all(Radius.circular(10)),
+                              color: Colors.white70
+                            ),
 
 
+                            ),
                           ),
                         ],
                       ),
@@ -89,150 +102,159 @@ class _LoginState extends State<Login> {
 
                       Form(
                         key: _formkey,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            Container(
+                        child: SingleChildScrollView(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              Container(
 
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 4),
-                                child: TextFormField(
-                                  textAlignVertical: TextAlignVertical.center,
-                                  decoration: new InputDecoration(
-                                    hintText: 'Email',
-                                    alignLabelWithHint: true,
-                                    prefixIcon: Icon(Icons.email_outlined,
-                                    size: 24,
-                                    color: Colors.black38,),
-                                    hintStyle: TextStyle(
-                                      fontSize: 16
-                                    )
-                                  ),
-                                  controller: _emailcontroller,
-                                  keyboardType: TextInputType.emailAddress,
-                                  textInputAction: TextInputAction.next,
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty){
-                                      return 'Please enter email address';
-                                    }
-                                    else{
-                                      return null;
-                                    }
-                                  },
-                                ),
-                              ),
-                              // color: Colors.white70,
-
-                              decoration: BoxDecoration(
-                                color: Colors.white70,
-                                borderRadius: BorderRadius.all(Radius.circular(10))
-
-                              ),
-                            ),
-                            SizedBox(height: 8,),
-                            Container(
-                              padding: EdgeInsets.symmetric(horizontal: 4),
-                              child: TextFormField(
-                                textAlignVertical: TextAlignVertical.center,
-                                decoration: new InputDecoration(
-                                    hintText: 'Password',
-                                    alignLabelWithHint: true,
-                                    prefixIcon: Icon(Icons.lock,
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                                  child: TextFormField(
+                                    textAlignVertical: TextAlignVertical.center,
+                                    decoration: new InputDecoration(
+                                      hintText: 'Email',
+                                      alignLabelWithHint: true,
+                                      prefixIcon: Icon(Icons.email_outlined,
                                       size: 24,
                                       color: Colors.black38,),
-                                    hintStyle: TextStyle(
+                                      hintStyle: TextStyle(
                                         fontSize: 16
-                                    )
-                                ),
-                                controller: _passwordcontroller,
-                                keyboardType: TextInputType.text,
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Please enter password';
-                                  }
-                                  else if (value.length < 8){
-                                    return "Password must be at least 8 characters";
-                                  }
-                                  else{
+                                      )
+                                    ),
+                                    controller: emailcontroller,
+                                    keyboardType: TextInputType.emailAddress,
+                                    textInputAction: TextInputAction.next,
+                                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                                    onSaved: (value){
+                                      emailcontroller.text = value!;
+                                    },
+                                    validator: (value) {
+                                    if (value!.isEmpty) {
+                                    return ("Please enter your email");
+                                    }
+                                    // reg expression for email validation
+                                    if (!RegExp("^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+.[a-z]")
+                                        .hasMatch(value)) {
+                                    return ("Please Enter a valid email");
+                                    }
                                     return null;
-                                  }
+                                    },
 
-                                },
-                                obscureText: true,
-                              ),
-                              decoration: BoxDecoration(
+                                  ),
+                                ),
+                                // color: Colors.white70,
+
+                                decoration: BoxDecoration(
                                   color: Colors.white70,
                                   borderRadius: BorderRadius.all(Radius.circular(10))
 
+                                ),
                               ),
-                            ),
-                            SizedBox(height: 4,),
-                            SizedBox(
-                              height: 16,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  GestureDetector(
-                                    child: Text('Forgot password?',
-                                    style: TextStyle(
-                                      color: Colors.redAccent
-                                    ),),
-                                    onTap: (){
-                                      print('forgot password');
-                                    },
-                                  )
-                                ],
-                              ),
-                            ),
-                            SizedBox(height: 40,),
-                            SizedBox(
-                              height: 45,
-                              child: ElevatedButton(
-                                  onPressed: (){
-                                    FirebaseAuth.instance.signInWithEmailAndPassword(email: _emailcontroller.text, password: _passwordcontroller.text).then((value){
-                                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Home()));
-                                      print("Signed In");
-                                    }).onError((error, stackTrace){
-                                        print('Error ${error.toString()}');
-                                    });
-
-
-                                    // Navigator.pushNamed(context, '/home');
-                                  },
-                                  style: ButtonStyle(
-
+                              SizedBox(height: 8,),
+                              Container(
+                                padding: EdgeInsets.symmetric(horizontal: 4),
+                                child: TextFormField(
+                                  textAlignVertical: TextAlignVertical.center,
+                                  decoration: new InputDecoration(
+                                      hintText: 'Password',
+                                      alignLabelWithHint: true,
+                                      prefixIcon: Icon(Icons.lock,
+                                        size: 24,
+                                        color: Colors.black38,),
+                                      hintStyle: TextStyle(
+                                          fontSize: 16
+                                      )
                                   ),
-                                  child: Text("Sign In",
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                  ),)),
-                            ),
-                            SizedBox(height: 40,),
-                            SizedBox(
-                              height: 16,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Text("Don't have an account?  ",
-                                  style: TextStyle(
-                                    color: Colors.black54
-                                  ),),
-                                  GestureDetector(
-                                    child: Text('Create an account',
-                                      style: TextStyle(
-                                        color: Colors.blueAccent
-                                      ),
-                                    ),
-                                    onTap: (){
-                                      print('create a new account');
-                                      Navigator.pushReplacementNamed(context, '/signup');
-                                    },
-                                  )
-                                ],
+                                  controller: passwordcontroller,
+                                  keyboardType: TextInputType.text,
+                                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                                  validator: (value) {
+                                    RegExp regex = new RegExp(r'^.{6,}$');
+                                    if (value!.isEmpty) {
+                                      return ("Password is required for login");
+                                    }
+                                    if (!regex.hasMatch(value)) {
+                                      return ("Enter Valid Password(Min. 6 Character)");
+                                    }
+                                  },
+                                  onSaved: (value) {
+                                    passwordcontroller.text = value!;
+                                  },
+                                  obscureText: true,
+                                ),
+                                decoration: BoxDecoration(
+                                    color: Colors.white70,
+                                    borderRadius: BorderRadius.all(Radius.circular(10))
+
+                                ),
                               ),
-                            )
-                          ],
+                              SizedBox(height: 4,),
+                              SizedBox(
+                                height: 16,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    GestureDetector(
+                                      child: Text('Forgot password?',
+                                      style: TextStyle(
+                                        color: Colors.redAccent
+                                      ),),
+                                      onTap: (){
+                                        print('forgot password');
+                                      },
+                                    )
+                                  ],
+                                ),
+                              ),
+                              SizedBox(height: 40,),
+                              SizedBox(
+                                height: 45,
+                                child: ElevatedButton(
+                                    onPressed: (){
+                                      signIn(emailcontroller.text, passwordcontroller.text);
+                                        // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Home()));
+                                        print("Signed In");
+                                      },
+
+
+                                      // Navigator.pushNamed(context, '/home');
+
+                                    style: ButtonStyle(
+
+                                    ),
+                                    child: Text("Sign In",
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                    ),)),
+                              ),
+                              SizedBox(height: 40,),
+                              SizedBox(
+                                height: 16,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Text("Don't have an account?  ",
+                                    style: TextStyle(
+                                      color: Colors.black54
+                                    ),),
+                                    GestureDetector(
+                                      child: Text('Create an account',
+                                        style: TextStyle(
+                                          color: Colors.blueAccent
+                                        ),
+                                      ),
+                                      onTap: (){
+                                        print('create a new account');
+                                        Navigator.pushReplacementNamed(context, '/signup');
+                                      },
+                                    )
+                                  ],
+                                ),
+                              )
+                            ],
+                          ),
                         ),
                       ),
 
@@ -254,4 +276,44 @@ class _LoginState extends State<Login> {
 
     );
   }
+  void signIn(String email, String password) async {
+    if (_formkey.currentState!.validate()) {
+      try {
+        await _auth
+            .signInWithEmailAndPassword(email: email, password: password)
+            .then((uid) => {
+          Fluttertoast.showToast(msg: "Login Successful"),
+          Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (context) => Home())),
+        });
+      } on FirebaseAuthException catch (error) {
+        switch (error.code) {
+          case "invalid-email":
+            errorMessage = "Your email address appears to be malformed.";
+
+            break;
+          case "wrong-password":
+            errorMessage = "Your password is wrong.";
+            break;
+          case "user-not-found":
+            errorMessage = "User with this email doesn't exist.";
+            break;
+          case "user-disabled":
+            errorMessage = "User with this email has been disabled.";
+            break;
+          case "too-many-requests":
+            errorMessage = "Too many requests";
+            break;
+          case "operation-not-allowed":
+            errorMessage = "Signing in with Email and Password is not enabled.";
+            break;
+          default:
+            errorMessage = "An undefined Error happened.";
+        }
+        Fluttertoast.showToast(msg: errorMessage!);
+        print(error.code);
+      }
+    }
+  }
 }
+
