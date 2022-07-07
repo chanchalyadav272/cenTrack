@@ -22,7 +22,7 @@ class _HomeState extends State<Home> {
               onPressed: (){
                 FirebaseAuth.instance.signOut().then((value){
                   print('Signed Out');
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => Login()));
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Login()));
                 });
               },
 

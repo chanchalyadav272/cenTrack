@@ -18,7 +18,7 @@ class _SignUpState extends State<SignUp> {
   final _passwordcontroller = TextEditingController();
   final _usernamecontroller = TextEditingController();
   final _dobcontroller = TextEditingController();
-  String errorMessage = "";
+  late String errorMessage = "";
 
   @override
   Widget build(BuildContext context) {
@@ -283,9 +283,12 @@ class _SignUpState extends State<SignUp> {
                                     email: _emailcontroller.text, 
                                     password: _passwordcontroller.text).then((value){
                                       print('Created New Account');
-                                      Navigator.push(context, MaterialPageRoute(builder: (context) => Home()));
+                                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Home()));
                                 }).onError((error, stackTrace) {
                                   print('Error ${error.toString()}');
+                                  setState((){
+                                    errorMessage = errorMessage.toString();
+                                  });
 
                                 });
 
@@ -320,7 +323,7 @@ class _SignUpState extends State<SignUp> {
                                 ),
                                 onTap: (){
                                   print('sign in');
-                                  Navigator.pushNamed(context, '/login');
+                                  Navigator.pushReplacementNamed(context, '/login');
                                 },
                               )
                             ],

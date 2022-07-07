@@ -190,7 +190,7 @@ class _LoginState extends State<Login> {
                               child: ElevatedButton(
                                   onPressed: (){
                                     FirebaseAuth.instance.signInWithEmailAndPassword(email: _emailcontroller.text, password: _passwordcontroller.text).then((value){
-                                      Navigator.push(context, MaterialPageRoute(builder: (context) => Home()));
+                                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Home()));
                                       print("Signed In");
                                     }).onError((error, stackTrace){
                                         print('Error ${error.toString()}');
@@ -226,7 +226,7 @@ class _LoginState extends State<Login> {
                                     ),
                                     onTap: (){
                                       print('create a new account');
-                                      Navigator.pushNamed(context, '/signup');
+                                      Navigator.pushReplacementNamed(context, '/signup');
                                     },
                                   )
                                 ],
