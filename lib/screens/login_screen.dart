@@ -20,6 +20,8 @@ class _LoginState extends State<Login> {
   final passwordcontroller = new TextEditingController();
 
   final _auth = FirebaseAuth.instance;
+  Stream<User?> get authChange => _auth.authStateChanges();
+
 
 
 
@@ -276,6 +278,7 @@ class _LoginState extends State<Login> {
 
     );
   }
+
   void signIn(String email, String password) async {
     if (_formkey.currentState!.validate()) {
       try {
