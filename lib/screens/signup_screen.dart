@@ -1,4 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+
+import 'home_screen.dart';
 
 
 class SignUp extends StatefulWidget {
@@ -14,6 +18,7 @@ class _SignUpState extends State<SignUp> {
   final _passwordcontroller = TextEditingController();
   final _usernamecontroller = TextEditingController();
   final _dobcontroller = TextEditingController();
+  String errorMessage = "";
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +53,7 @@ class _SignUpState extends State<SignUp> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Container(
-                    height: 400,
+                    height: 405,
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.all(Radius.circular(10)),
                         color: Colors.white70
@@ -102,8 +107,8 @@ class _SignUpState extends State<SignUp> {
                                       fontSize: 16
                                   )
                               ),
-                              controller: _emailcontroller,
-                              keyboardType: TextInputType.emailAddress,
+                              controller: _usernamecontroller,
+                              keyboardType: TextInputType.name,
                               textInputAction: TextInputAction.next,
                               validator: (value) {
                                 if (value == null || value.isEmpty){
@@ -238,6 +243,20 @@ class _SignUpState extends State<SignUp> {
                           ),
                         ),
                         SizedBox(height: 4,),
+
+                        SizedBox(height: 16,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Text(errorMessage,
+                            style: TextStyle(
+                              color: Colors.redAccent,
+                            ),)
+                          ],
+                        ),
+                        ),
+
+                        SizedBox(height: 4,),
                         // SizedBox(
                         //   height: 16,
                         //   child: Row(
@@ -260,6 +279,18 @@ class _SignUpState extends State<SignUp> {
                           height: 45,
                           child: ElevatedButton(
                               onPressed: (){
+                                FirebaseAuth.instance.createUserWithEmailAndPassword(
+                                    email: _emailcontroller.text, 
+                                    password: _passwordcontroller.text).then((value){
+                                      print('Created New Account');
+                                      Navigator.push(context, MaterialPageRoute(builder: (context) => Home()));
+                                }).onError((error, stackTrace) {
+                                  print('Error ${error.toString()}');
+
+                                });
+
+                                
+                                
                                 print("Sign up");
                               },
                               style: ButtonStyle(
@@ -270,7 +301,7 @@ class _SignUpState extends State<SignUp> {
                                   fontSize: 20,
                                 ),)),
                         ),
-                        SizedBox(height: 25,),
+                        SizedBox(height: 15,),
                         SizedBox(
                           height: 16,
                           child: Row(

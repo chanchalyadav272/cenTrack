@@ -1,5 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:khatabook_clone/screens/home_screen.dart';
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
@@ -187,7 +189,14 @@ class _LoginState extends State<Login> {
                               height: 45,
                               child: ElevatedButton(
                                   onPressed: (){
-                                    print("login");
+                                    FirebaseAuth.instance.signInWithEmailAndPassword(email: _emailcontroller.text, password: _passwordcontroller.text).then((value){
+                                      Navigator.push(context, MaterialPageRoute(builder: (context) => Home()));
+                                      print("Signed In");
+                                    }).onError((error, stackTrace){
+                                        print('Error ${error.toString()}');
+                                    });
+
+
                                     // Navigator.pushNamed(context, '/home');
                                   },
                                   style: ButtonStyle(
