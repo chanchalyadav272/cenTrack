@@ -104,7 +104,7 @@ class _TransactionsState extends State<Transactions> {
             //   ),
             // ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 20),
               child: Container(
                 // height: 35,
                 child: Row(

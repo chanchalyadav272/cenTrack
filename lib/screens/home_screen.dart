@@ -311,8 +311,12 @@ class _HomeState extends State<Home> {
 
                             Container(
 
-                              height: MediaQuery.of(context).size.height*0.55,
+                              height: MediaQuery.of(context).size.height*0.5,
                               child: const CustomersList()),
+                            Container(
+                              color: Colors.white,
+                              height:MediaQuery.of(context).size.height,
+                            )
 
 
                           ],
