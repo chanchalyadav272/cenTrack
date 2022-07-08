@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:khatabook_clone/resources/customersList.dart';
 import 'package:khatabook_clone/user_model.dart';
 import 'login_screen.dart';
 import 'package:flutter/src/rendering/box.dart';
@@ -18,6 +19,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   User? user = FirebaseAuth.instance.currentUser;
   userModel usermodel = userModel();
+  int _currentIndex =0;
 
   @override
   @override
@@ -38,12 +40,16 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
+
       length: 2,
       child: Scaffold(
 
         appBar: AppBar(
+          backgroundColor: Colors.blueAccent.shade700,
           elevation: 0,
           bottom: TabBar(
+            indicatorColor: Colors.white,
+            indicatorWeight: 4,
             tabs: [
               Tab(text: 'Customers',),
               Tab(text: 'Suppliers',),
@@ -70,13 +76,20 @@ class _HomeState extends State<Home> {
               )),
           centerTitle: false,
           actions: [
-            IconButton(onPressed: (){}, icon: Icon(Icons.person_outline_outlined)),
+            IconButton(onPressed: (){
+
+            }, icon: Icon(Icons.person_outline_outlined)),
 
           ],
         ),
 
         bottomNavigationBar: BottomNavigationBar(
           enableFeedback: true,
+          currentIndex: _currentIndex,
+          onTap: (value){
+            _currentIndex = value;
+            setState((){});
+          },
 
           items: [
             BottomNavigationBarItem(icon: Icon(Icons.people_alt_outlined),
@@ -121,7 +134,7 @@ class _HomeState extends State<Home> {
             Container(
               height: 73,
               decoration: BoxDecoration(
-                color: Colors.blue,
+                color: Colors.blueAccent.shade700,
               ),
             ),
 
@@ -233,7 +246,7 @@ class _HomeState extends State<Home> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.symmetric( vertical: 16),
+                    padding: const EdgeInsets.symmetric( vertical: 8),
                     child: Material(
                       // borderRadius: BorderRadius.all(Radius.circular(8)),
                       child: Container(
@@ -279,9 +292,9 @@ class _HomeState extends State<Home> {
 
                                        ),
                                      ),
-                                     
+
                                    ),
-                                   
+
                                  ),
                                   Icon(Icons.filter_alt_outlined,
                                   color: Colors.blue,
@@ -295,6 +308,12 @@ class _HomeState extends State<Home> {
                             ),
                             Divider(height: 16,
                               color: Colors.black38,),
+
+                            Container(
+
+                              height: MediaQuery.of(context).size.height*0.55,
+                              child: const CustomersList()),
+
 
                           ],
                         ),
