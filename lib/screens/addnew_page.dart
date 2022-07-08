@@ -72,7 +72,7 @@ class _AddNewState extends State<AddNew> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(top: 8, left: 6),
+              padding: const EdgeInsets.only(top: 8, left: 0),
               child: Container(
                 child: ListTile(
                   title: Text('Add New Customer',
@@ -89,10 +89,13 @@ class _AddNewState extends State<AddNew> {
               ),
             ),
             Divider(height: 2,),
-            Container(
+            Padding(
+              padding: const EdgeInsets.only(left: 4),
+              child: Container(
 
-                height: MediaQuery.of(context).size.height*0.7,
-                child: const RegisteredList()),
+                  height: MediaQuery.of(context).size.height*0.7,
+                  child:  RegisteredList()),
+            ),
 
 
 

@@ -40,6 +40,8 @@ dependencies:
   cloud_firestore: ^3.2.1
   fluttertoast: ^8.0.9
   azlistview: ^2.0.0
+  cupertino_list_tile: ^0.2.1
+  intl: ^0.17.0
 
 dev_dependencies:
   flutter_test:

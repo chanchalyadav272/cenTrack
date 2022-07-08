@@ -29,7 +29,7 @@ class CustomersList extends StatelessWidget {
                 ),
                 leading: CircleAvatar(
                     backgroundColor: Colors.black12,
-                  child: Text('${CustomerData[index]['username'].toString()[0]}',
+                  child: Text('${CustomerData[index]['username'].toString()[0].toUpperCase()}',
                   style: TextStyle(
                     color: Colors.blue,
                     fontSize: 20,

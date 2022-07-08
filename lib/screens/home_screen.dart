@@ -34,7 +34,6 @@ class _HomeState extends State<Home> {
       setState(() {});
     });
   }
-  final List<People> _people = <People>[];
 
 
   @override

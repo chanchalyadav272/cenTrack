@@ -1,18 +1,107 @@
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:khatabook_clone/resources/customersList.dart';
 
 class Transactions extends StatefulWidget {
-  const Transactions({Key? key}) : super(key: key);
+
+  final customerUid;
+  final customerName;
+
+  const Transactions({Key? key, required this.customerUid, required this.customerName}) : super(key: key);
+
 
   @override
-  State<Transactions> createState() => _TransactionsState();
+  State<Transactions> createState() => _TransactionsState(customerUid, customerName);
 }
 
 class _TransactionsState extends State<Transactions> {
-  final String displayName = "hie";
+  
+  CollectionReference transactionPages = FirebaseFirestore.instance.collection('transactionPages');
+  final  customerUid;
+  final  customerName;
+  final currentUserId = FirebaseAuth.instance.currentUser!.uid;
+  var transactionPageId;
+  var _textcontroller = new TextEditingController();
+  
+  
   int _currentIndex = 0;
-  int netAmount = 0;
+  int balance = 0;
+  var netAmount =0;
+
+  _TransactionsState(this.customerUid, this.customerName);
+
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    transactionPages.where('users', isEqualTo: {customerUid: null, currentUserId:null}).limit(1).get()
+        .then((QuerySnapshot querySnapshot)
+    {
+          if(querySnapshot.docs.isNotEmpty){
+            transactionPageId =  querySnapshot.docs.single.id;
+
+
+          }
+          else(
+           transactionPages.add({
+             'users': {
+               currentUserId: null,
+               customerUid:null,
+             }
+           }).then((value) => {
+             transactionPageId = value
+           })
+          );
+
+
+
+
+    }).catchError((error){});
+
+  }
+  void sendAmount(int amount){
+
+    if(amount == '') return;
+      setState((){
+        netAmount >0;
+      });
+    transactionPages.doc(transactionPageId).collection('transactions').add({
+    'createdOn': FieldValue.serverTimestamp(),
+    'uid': currentUserId,
+    'amount': amount,
+      'bool': "true",
+    }).then((value) => _textcontroller.text = '');
+
+
+    
+
+
+  }
+  void getAmount(int amount){
+    if(amount == '') return;
+    setState((){
+      netAmount <0;
+    });
+    transactionPages.doc(transactionPageId).collection('transactions').add({
+      'createdOn': FieldValue.serverTimestamp(),
+      'uid': currentUserId,
+      'amount': amount,
+      'bool' : "false",
+    }).then((value) => _textcontroller.text = '');
+
+
+  }
+
+
+
+
+  @override
+
+
   Widget build(BuildContext context) {
     return Container(
       child: Scaffold(
@@ -36,7 +125,7 @@ class _TransactionsState extends State<Transactions> {
             ListTile(
               title: Row(
                 children: [
-                  Text(displayName,
+                  Text(customerName,
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 20
@@ -66,7 +155,7 @@ class _TransactionsState extends State<Transactions> {
               ),),
               leading: CircleAvatar(
                 backgroundColor: Colors.white,
-                child: Text('${displayName[0]}',
+                child: Text('${customerName[0].toUpperCase()}',
                 style: TextStyle(
                   color: Colors.blue,
                   fontWeight: FontWeight.bold,
@@ -113,13 +202,46 @@ class _TransactionsState extends State<Transactions> {
                     Expanded(
                       child: Padding(
                         padding: const EdgeInsets.only(right: 8),
+                        child: GestureDetector(
+                          onTap: (){
+                            print('you gave');
+                            sendAmount(int.parse(_textcontroller.text));
+                          },
+                          child: Container(
+                            height: 50,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text('YOU GAVE  ₹',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            decoration: BoxDecoration(
+                                color: Colors.red,
+                                borderRadius: BorderRadius.all(Radius.circular(6))
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Expanded(child: Padding(
+                      padding: const EdgeInsets.only(left: 8),
+                      child: GestureDetector(
+                        onTap: (){
+                          getAmount(int.parse(_textcontroller.text));
+                        },
                         child: Container(
                           height: 50,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              Text('YOU GAVE  ₹',
+                              Text('YOU GOT  ₹',
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold,
@@ -128,31 +250,9 @@ class _TransactionsState extends State<Transactions> {
                             ],
                           ),
                           decoration: BoxDecoration(
-                              color: Colors.red,
+                              color: Colors.green,
                               borderRadius: BorderRadius.all(Radius.circular(6))
                           ),
-                        ),
-                      ),
-                    ),
-                    Expanded(child: Padding(
-                      padding: const EdgeInsets.only(left: 8),
-                      child: Container(
-                        height: 50,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text('YOU GOT  ₹',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                        decoration: BoxDecoration(
-                            color: Colors.green,
-                            borderRadius: BorderRadius.all(Radius.circular(6))
                         ),
                       ),
                     ))
@@ -208,14 +308,14 @@ class _TransactionsState extends State<Transactions> {
                                     child: Padding(
                                       padding: const EdgeInsets.only(bottom: 24),
                                       child: ListTile(
-                                        title: netAmount==0? Text('Settled Up',
+                                        title: balance==0? Text('Settled Up',
                                         style: TextStyle(
                                           fontWeight: FontWeight.bold,
                                         ),) : Text('Amount Due',
                                         style: TextStyle(
                                           fontWeight: FontWeight.bold
                                         ),),
-                                        leading: netAmount==0? CircleAvatar(
+                                        leading: balance==0? CircleAvatar(
                                           radius: 10,
                                           backgroundColor: Colors.green,
                                           child: Icon(Icons.check_outlined,
@@ -275,9 +375,222 @@ class _TransactionsState extends State<Transactions> {
 
 
                         ],
-                      )
                       ),
-                  // CustomersList(),
+
+                      ),
+                  Container(
+                    // color: Colors.red,
+                    child: IntrinsicHeight(
+
+                      child: Row(crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(0),
+                            child: Container(
+
+
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  border: Border.all(color: Colors.black54),
+                                  borderRadius: BorderRadius.all(Radius.circular(0))
+                              ),
+                              height: 50,
+                              width: MediaQuery.of(context).size.width,
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 16),
+                                child: TextFormField(
+                                  autofocus: true,
+                                  textAlign: TextAlign.left,
+                                  textAlignVertical: TextAlignVertical.center,
+                                  keyboardType: TextInputType.number,
+                                  controller: _textcontroller,
+                                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+
+                                  decoration: InputDecoration(
+
+                                      prefixIcon: Icon(Icons.currency_rupee_outlined),
+                                      hintText: 'Enter amount',
+                                      hintStyle: TextStyle(
+                                          color: Colors.grey
+                                      ),
+                                      border: InputBorder.none
+
+                                  ),
+                                ),
+                              ),
+
+                            ),
+
+                          ),
+
+
+                        ],
+                      ),
+                    ),
+                  ),
+                  Container(
+                    color: Colors.black12,
+                    height: 40,
+                    child: IntrinsicHeight(
+                      child: Row(
+                        children: [
+                          Expanded(child: Container(
+
+                            child: Text('ENTRIES',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18
+                            ),),
+                            alignment: Alignment.center,
+                          )),
+                          Expanded(child: Container(
+
+                            child: Text('YOU GAVE',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18
+                              ),),
+                            alignment: Alignment.center,
+                          )),
+                          Expanded(child: Container(
+
+                            child: Text('YOU GOT',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18
+                              ),),
+                            alignment: Alignment.center,
+                          )),
+
+                        ],
+                      ),
+                    ),
+                  ),
+
+
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Container(
+                      child: StreamBuilder<QuerySnapshot>(
+                        stream: FirebaseFirestore.instance.collection('transactionPages').doc(transactionPageId)
+                            .collection('transactions').orderBy('createdOn', descending: true).snapshots(),
+                        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot)
+                        {
+
+                          if (snapshot.hasError){
+                            return Center(
+                              child: Text("Something went wrong"),
+                            );
+                          }
+                          // if (snapshot.connectionState == ConnectionState.waiting){
+                          //   return Center(
+                          //     child: SpinKitChasingDots(
+                          //       color: Colors.black,
+                          //       size: 50,
+                          //     ),
+                          //   );
+                          // }
+                          if( snapshot.hasData){
+
+
+                            return Container(
+                              child: Column(
+                                children: [
+
+                                  Container(
+                                    // color: Colors.grey,
+                                    height: MediaQuery.of(context).size.height*0.5,
+                                    child: ListView(
+                                      reverse: false,
+                                      children:
+                                        snapshot.data!.docs.map((DocumentSnapshot document){
+                                          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+
+
+                                              return Padding(
+                                                padding: const EdgeInsets.only(bottom: 4),
+                                                child: Container(
+                                                  color: Colors.white,
+
+                                                  height: 100,
+                                                  child: Row(
+                                                    children: [
+                                                      Expanded(child: Padding(
+                                                        padding: const EdgeInsets.fromLTRB(16, 24, 8, 8),
+                                                        child: Container(
+                                                          child: Column(
+                                                            children: [
+                                                              Text(
+                                                                data['createdOn'] == null
+                                                                    ? DateTime.now().toString() : data['createdOn'].toDate().toString()
+                                                              ),
+                                                              Padding(
+                                                                padding: const EdgeInsets.all(8.0),
+                                                                child: Container(
+                                                                  decoration: BoxDecoration(
+                                                                    color: Colors.black12,
+                                                                    borderRadius: BorderRadius.all(Radius.circular(4))
+                                                                  ),
+                                                                    
+                                                                    child: Padding(
+                                                                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                                                                      child: Text('Bal. ₹ ${balance}'),
+                                                                    )),
+                                                              )
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      flex: 1,),
+                                                      Expanded(child: Padding(
+                                                        padding: const EdgeInsets.fromLTRB(45, 25, 45, 50),
+                                                        child: Container(
+
+                                                          child: Text('₹ ${(data['amount'])}' ,
+                                                          style: TextStyle(
+                                                            fontWeight: FontWeight.bold,
+                                                            fontSize: 18,
+                                                            color:
+                                                            (getALignment(data['uid'].toString(), data['bool']) == Alignment.centerLeft)
+                                                                ? Colors.red : Colors.green
+                                                          ),),
+                                                          alignment: getALignment(data['uid'].toString(), data['bool'])
+                                                        ),
+                                                      ),
+                                                      flex: 2,),
+
+                                                    ],
+                                                  ),
+                                                ),
+                                              );
+
+                                        }).toList(),
+
+
+
+                                    ),
+                                  ),
+                                  Container(
+                                    height: MediaQuery.of(context).size.height,
+                                    color: Colors.white,
+                                  )
+                                ],
+                              ),
+                            );
+
+
+
+                          }
+                          else  return Center(
+                            child: Text("Something went wrong"),
+                          );
+
+
+                        },
+                      ),
+                    ),
+                  )
 
 
                 ],
@@ -287,5 +600,24 @@ class _TransactionsState extends State<Transactions> {
         ),
       ),
     );
+  }
+
+  bool isSender(String sender) {
+    return sender == currentUserId;
+  }
+  Alignment getALignment(String sender, String isSent){
+    if( sender == currentUserId){
+      if(isSent == 'true'){
+       return Alignment.centerLeft;
+      }
+      else return Alignment.centerRight;
+    }
+    else{
+      if(isSent == 'true'){
+        return Alignment.centerRight;
+      }
+      else return Alignment.centerLeft;
+    }
+    
   }
 }
