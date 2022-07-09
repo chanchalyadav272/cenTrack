@@ -15,12 +15,14 @@ import 'package:khatabook_clone/screens/transactions_page.dart';
 class RegisteredList extends StatefulWidget {
   const RegisteredList({Key? key}) : super(key: key);
 
+
   @override
   State<RegisteredList> createState() => _RegisteredListState();
 }
 
 class _RegisteredListState extends State<RegisteredList> {
   var currentUser = FirebaseAuth.instance.currentUser?.uid;
+  var currentUserName = FirebaseAuth.instance.currentUser?.displayName;
   CollectionReference transactionPages = FirebaseFirestore.instance.collection('transactionPages');
   var  customerUid;
   var  customerName;
@@ -33,7 +35,8 @@ class _RegisteredListState extends State<RegisteredList> {
     customerUid = uid;
     customerName = name;
 
-    await transactionPages.where('users', isEqualTo: {customerUid: null, currentUserId:null}).limit(1).get()
+
+     await transactionPages.where('users', isEqualTo: {customerUid: null, currentUserId:null}).limit(1).get()
           .then((QuerySnapshot querySnapshot)
       {
         if(querySnapshot.docs.isNotEmpty){
@@ -49,8 +52,8 @@ class _RegisteredListState extends State<RegisteredList> {
 
               },
               'names': {
-                currentUserId:FirebaseAuth.instance.currentUser?.displayName,
-                currentUserId: customerName
+                currentUserId: currentUserName,
+                customerUid: customerName
 
               }
             }).then((value) => {
@@ -62,11 +65,47 @@ class _RegisteredListState extends State<RegisteredList> {
 
 
       }).catchError((error){});
+    print(transactionPageId);
 
-    Navigator.push(
-        (context), MaterialPageRoute(builder: (context) => Transactions(customerUid: uid, customerName: name, transactionPageId: transactionPageId,))
-    );
+   if(transactionPageId!=null){
+     Navigator.push(
+         (context), MaterialPageRoute(builder: (context) => Transactions(customerUid: uid, customerName: name, transactionPageId: transactionPageId,)));
+   }
+    else
+    {
+      await transactionPages
+          .where('users', isEqualTo: {customerUid: null, currentUserId: null})
+          .limit(1)
+          .get()
+          .then((QuerySnapshot querySnapshot) {
+            if (querySnapshot.docs.isNotEmpty) {
+              transactionPageId = querySnapshot.docs.single.id;
+            } else
+              (transactionPages.add({
+                'users': {
+                  currentUserId: null,
+                  customerUid: null,
+                },
+                'names': {
+                  currentUserId: currentUserName,
+                  customerUid: customerName
+                }
+              }).then((value) => {transactionPageId = value}));
+          })
+          .catchError((error) {});
+      print(transactionPageId);
 
+      if (transactionPageId != null) {
+        Navigator.push(
+            (context),
+            MaterialPageRoute(
+                builder: (context) => Transactions(
+                      customerUid: uid,
+                      customerName: name,
+                      transactionPageId: transactionPageId,
+                    )));
+      }
+    }
   }
   @override
   Widget build(BuildContext context) {

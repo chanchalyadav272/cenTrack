@@ -510,6 +510,9 @@ class _TransactionsState extends State<Transactions> {
                                       snapshot.data!.docs.map((DocumentSnapshot document){
                                         Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
 
+                                        balance = data['balance'] as int;
+                                        print(balance);
+
 
                                         return Padding(
                                           padding: const EdgeInsets.only(bottom: 4),

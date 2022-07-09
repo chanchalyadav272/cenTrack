@@ -2,10 +2,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:khatabook_clone/resources/customersList.dart';
+import 'package:khatabook_clone/resources/registeredList.dart';
+import 'package:khatabook_clone/resources/lib.dart';
+import 'package:khatabook_clone/screens/transactions_page.dart';
 import 'package:khatabook_clone/user_model.dart';
 import 'login_screen.dart';
 import 'package:flutter/src/rendering/box.dart';
+
 
 
 
@@ -21,7 +24,9 @@ class _HomeState extends State<Home> {
   userModel usermodel = userModel();
   int _currentIndex =0;
 
-  @override
+
+
+
   @override
   void initState() {
     super.initState();
@@ -32,6 +37,9 @@ class _HomeState extends State<Home> {
         .then((value) {
       this.usermodel = userModel.fromMap(value.data());
       setState(() {});
+      pageState.refreshTransactionsForCurrentUser();
+
+
     });
   }
 
@@ -76,6 +84,7 @@ class _HomeState extends State<Home> {
           centerTitle: false,
           actions: [
             IconButton(onPressed: (){
+              print(FirebaseAuth.instance.currentUser?.displayName);
 
             }, icon: Icon(Icons.person_outline_outlined)),
 
@@ -223,7 +232,7 @@ class _HomeState extends State<Home> {
                               children: [
                                 GestureDetector(
                                   onTap: (){
-                                    Navigator.pushNamed(context, '/transactions');
+
                                   },
                                   child: Text('VIEW REPORT ',
                                   style: TextStyle(
@@ -311,7 +320,53 @@ class _HomeState extends State<Home> {
                             Container(
 
                               height: MediaQuery.of(context).size.height*0.5,
-                              child: const CustomersList()),
+                              child: CustomScrollView(
+                                slivers: [
+                                  SliverList(
+                                    delegate: SliverChildListDelegate(
+                                        pageState.transactions.values.toList().map((data){
+                                          return Column(
+                                            children: [
+                                              Padding(
+                                                padding: const EdgeInsets.all(8.0),
+                                                child: InkWell(
+                                                  onTap: (){
+                                                    Navigator.push(context, MaterialPageRoute(builder: (context) => Transactions(customerUid: data['customerUid'], customerName: data['customerName'], transactionPageId: data['transactionPageId'])));
+
+                                                  },
+                                                  child: ListTile(
+                                                    title:  Text(data['customerName'].toString(),),
+                                                    subtitle: (int.parse(data['balance'].toString()))>=0 ? null :
+                                                    Row(
+                                                      children: [
+                                                        Icon(Icons.alarm, size: 18,),
+                                                        Text(' Set due date')
+                                                      ],
+                                                    ),
+                                                    leading: CircleAvatar(
+                                                      backgroundColor: Colors.black12,
+                                                      child: Text('${data['customerName'].toString()[0].toUpperCase()}',
+                                                        style: TextStyle(
+                                                            color: Colors.blue,
+                                                            fontSize: 20,
+                                                            fontWeight: FontWeight.bold
+                                                        ),),
+                                                    ),
+                                                    trailing: Text('₹ ${(int.parse(data['balance'].toString())).abs()}',
+                                                      style: TextStyle(
+                                                          color: (int.parse(data['balance'].toString()))>=0 ? Colors.green : Colors.red
+                                                      ),),
+                                                  ),
+                                                ),
+                                              ),
+                                              Divider(height: 4,)
+                                            ],
+                                          );
+                                        }).toList()
+                                    ),
+                                  ),
+                                ],
+                              )),
                             Container(
                               color: Colors.white,
                               height:MediaQuery.of(context).size.height,
@@ -330,6 +385,7 @@ class _HomeState extends State<Home> {
 
               ),
             ),
+
 
     ],
         ),

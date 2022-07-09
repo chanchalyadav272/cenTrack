@@ -411,6 +411,8 @@ class _SignUpState extends State<SignUp> {
 
 
   await firebaseFirestore.collection('users').doc(user.uid).set(usermodel.toMap());
+  FirebaseAuth.instance.currentUser?.updateDisplayName(_usernamecontroller.text);
+
   Fluttertoast.showToast(msg: "Account created successfully :) ");
 
 Navigator.restorablePushNamedAndRemoveUntil(context, '/home',
