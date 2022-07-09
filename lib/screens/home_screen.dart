@@ -113,6 +113,7 @@ class _HomeState extends State<Home> {
         bottomNavigationBar: BottomNavigationBar(
           enableFeedback: true,
           currentIndex: _currentIndex,
+          type: BottomNavigationBarType.fixed,
           onTap: (value){
             _currentIndex = value;
             setState((){
@@ -125,7 +126,8 @@ class _HomeState extends State<Home> {
             label: 'Parties'),
             BottomNavigationBarItem(icon: Icon(Icons.currency_rupee_outlined),
             label: 'Money'),
-            BottomNavigationBarItem(icon: Icon(Icons.category_outlined),label: 'More')
+            BottomNavigationBarItem(icon: Icon(Icons.category_outlined),label: 'More'),
+            BottomNavigationBarItem(icon: Icon(Icons.person_outline_outlined),label: 'Profile')
           ],
         ),
         floatingActionButton: FloatingActionButton.extended(
