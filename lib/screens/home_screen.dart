@@ -6,6 +6,7 @@ import 'package:khatabook_clone/resources/registeredList.dart';
 import 'package:khatabook_clone/resources/lib.dart';
 import 'package:khatabook_clone/screens/transactions_page.dart';
 import 'package:khatabook_clone/user_model.dart';
+import 'package:mobx/mobx.dart';
 import 'login_screen.dart';
 import 'package:flutter/src/rendering/box.dart';
 
@@ -23,6 +24,10 @@ class _HomeState extends State<Home> {
   User? user = FirebaseAuth.instance.currentUser;
   userModel usermodel = userModel();
   int _currentIndex =0;
+  int sum1 = 0;
+  int sum2 = 0;
+  int j = 1;
+  var balances = [];
 
 
 
@@ -37,15 +42,22 @@ class _HomeState extends State<Home> {
         .then((value) {
       this.usermodel = userModel.fromMap(value.data());
       setState(() {});
-      pageState.refreshTransactionsForCurrentUser();
+
 
 
     });
+    pageState.refreshTransactionsForCurrentUser();
+    sum1 = 0;
+    sum2 = 0;
+
+
+
   }
 
 
   @override
   Widget build(BuildContext context) {
+
     return DefaultTabController(
 
       length: 2,
@@ -84,9 +96,12 @@ class _HomeState extends State<Home> {
           centerTitle: false,
           actions: [
             IconButton(onPressed: (){
+              setState((){
+                j++;
+              });
               print(FirebaseAuth.instance.currentUser?.displayName);
 
-            }, icon: Icon(Icons.person_outline_outlined)),
+            }, icon: Icon(Icons.refresh)),
 
           ],
         ),
@@ -96,7 +111,9 @@ class _HomeState extends State<Home> {
           currentIndex: _currentIndex,
           onTap: (value){
             _currentIndex = value;
-            setState((){});
+            setState((){
+              j++;
+            });
           },
 
           items: [
@@ -179,7 +196,7 @@ class _HomeState extends State<Home> {
 
                                       children: [
 
-                                        Text('₹ 47',
+                                        Text('₹ ${sum2/j}',
                                         style: TextStyle(
                                           color: Colors.green,
                                           fontWeight: FontWeight.bold,
@@ -203,7 +220,7 @@ class _HomeState extends State<Home> {
 
                                       children: [
 
-                                        Text('₹ 1',
+                                        Text('₹ ${sum1/j}',
                                           style: TextStyle(
                                               color: Colors.red,
                                               fontWeight: FontWeight.bold,
@@ -319,12 +336,20 @@ class _HomeState extends State<Home> {
 
                             Container(
 
+
                               height: MediaQuery.of(context).size.height*0.5,
                               child: CustomScrollView(
                                 slivers: [
                                   SliverList(
                                     delegate: SliverChildListDelegate(
                                         pageState.transactions.values.toList().map((data){
+
+
+                                          // balances[(data['customerUid'] as int)] = data['balance'];
+                                          // print(balances[(data['customerUid'])]);
+
+                                          (data['balance'] as int)>=0 ? sum1+=((data['balance'] as int).abs()) : sum2+=((data['balance'] as int).abs()) ;
+
                                           return Column(
                                             children: [
                                               Padding(
@@ -354,7 +379,7 @@ class _HomeState extends State<Home> {
                                                     ),
                                                     trailing: Text('₹ ${(int.parse(data['balance'].toString())).abs()}',
                                                       style: TextStyle(
-                                                          color: (int.parse(data['balance'].toString()))>=0 ? Colors.green : Colors.red
+                                                          color: (int.parse(data['balance'].toString()))<=0 ? Colors.green : Colors.red
                                                       ),),
                                                   ),
                                                 ),

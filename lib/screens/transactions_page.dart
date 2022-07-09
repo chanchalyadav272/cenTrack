@@ -34,36 +34,22 @@ class _TransactionsState extends State<Transactions> {
   int balance = 0;
 
   _TransactionsState(this.customerUid, this.customerName, this.transactionPageId);
-  //
-  // @override
-  // void initState() {
-  //   // TODO: implement initState
-  //   super.initState();
-  //   transactionPages.where('users', isEqualTo: {customerUid: null, currentUserId:null}).limit(1).get()
-  //       .then((QuerySnapshot querySnapshot)
-  //   {
-  //     if(querySnapshot.docs.isNotEmpty){
-  //       transactionPageId =  querySnapshot.docs.single.id;
-  //
-  //
-  //     }
-  //     else(
-  //         transactionPages.add({
-  //           'users': {
-  //             currentUserId: null,
-  //             customerUid:null,
-  //           }
-  //         }).then((value) => {
-  //           transactionPageId = value
-  //         })
-  //     );
-  //
-  //
-  //
-  //
-  //   }).catchError((error){});
-  //
-  // }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    setState((){});
+
+    setState((){});
+
+
+
+  }
+
+
+
   void sendAmount(int amount){
 
     if(amount == '') return;
@@ -108,6 +94,13 @@ class _TransactionsState extends State<Transactions> {
   Widget build(BuildContext context) {
     return Container(
       child: Scaffold(
+        floatingActionButton: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: FloatingActionButton(
+            onPressed:(){  setState((){});},
+            child: Icon(Icons.refresh),
+          ),
+        ),
         appBar: AppBar(
           toolbarHeight: 70,
           elevation: 0,
