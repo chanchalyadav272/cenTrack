@@ -27,6 +27,7 @@ class _TransactionsState extends State<Transactions> {
   final currentUserId = FirebaseAuth.instance.currentUser!.uid;
   final transactionPageId;
   var _textcontroller = new TextEditingController();
+  var _balancecontroller = new TextEditingController();
 
 
   int _currentIndex = 0;
@@ -74,7 +75,7 @@ class _TransactionsState extends State<Transactions> {
       'uid': currentUserId,
       'amount': amount,
       'bool': "true",
-      'balance': "balance"
+      'balance': balance
     }).then((value) => _textcontroller.text = '');
 
 
@@ -92,7 +93,7 @@ class _TransactionsState extends State<Transactions> {
       'uid': currentUserId,
       'amount': amount,
       'bool' : "false",
-      'balance': "balance",
+      'balance': balance,
     }).then((value) => _textcontroller.text = '');
 
 

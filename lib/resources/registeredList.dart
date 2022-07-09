@@ -25,6 +25,7 @@ class _RegisteredListState extends State<RegisteredList> {
   var  customerUid;
   var  customerName;
   final currentUserId = FirebaseAuth.instance.currentUser!.uid;
+
   var transactionPageId;
 
 
@@ -45,6 +46,11 @@ class _RegisteredListState extends State<RegisteredList> {
               'users': {
                 currentUserId: null,
                 customerUid:null,
+
+              },
+              'names': {
+                currentUserId:FirebaseAuth.instance.currentUser?.displayName,
+                currentUserId: customerName
 
               }
             }).then((value) => {
@@ -86,7 +92,7 @@ class _RegisteredListState extends State<RegisteredList> {
             child: CustomScrollView(
               slivers: [
                 SliverList(delegate: SliverChildListDelegate(snapshot.data!.docs.map((DocumentSnapshot document){
-                  Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+                  Map<String, dynamic> data = document.data() as Map<String, dynamic>;
                   return ListTile(
                     onTap: (){
                       callTransactionsPage(context, data['username'].toString(), data['uid'].toString());
