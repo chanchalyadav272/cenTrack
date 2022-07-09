@@ -34,6 +34,10 @@ class _TransactionsState extends State<Transactions> {
   int balance = 0;
   int netbalance = 0;
 
+
+
+
+
   _TransactionsState(this.customerUid, this.customerName, this.transactionPageId);
 
   @override
@@ -48,6 +52,7 @@ class _TransactionsState extends State<Transactions> {
 
 
   }
+
 
 
 
@@ -71,7 +76,10 @@ class _TransactionsState extends State<Transactions> {
   }
   void getAmount(int amount){
     if(amount == '') return;
-    netbalance = balance + amount;
+    setState((){
+      netbalance = balance + amount;
+    });
+
 
     transactionPages.doc(transactionPageId).collection('transactions').add({
       'createdOn': FieldValue.serverTimestamp(),
@@ -80,7 +88,7 @@ class _TransactionsState extends State<Transactions> {
       'bool' : "false",
       'balance': netbalance,
     }).then((value) => _textcontroller.text = '');
-    setState((){});
+
 
 
   }
@@ -91,7 +99,11 @@ class _TransactionsState extends State<Transactions> {
   @override
 
 
+
   Widget build(BuildContext context) {
+
+
+
     return Container(
       child: Scaffold(
         floatingActionButton: Padding(
@@ -685,88 +697,98 @@ class _TransactionsState extends State<Transactions> {
                                   ),
 
 
-                              SingleChildScrollView(
-                                child: Container(
-                                      // color: Colors.grey,
-                                      height: MediaQuery.of(context).size.height*0.5,
-                                      child: ListView(
-                                        reverse: false,
-                                        children:
-                                        snapshot.data!.docs.map((DocumentSnapshot document){
-                                          Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
+                              Flexible(flex: 15,
+                                fit: FlexFit.loose,
+                                child: SingleChildScrollView(
+                                  child: Container(
+                                        // color: Colors.grey,
+                                        height: MediaQuery.of(context).size.height*0.5,
+                                        child: ListView(
+                                          reverse: false,
+                                          children:
+                                          snapshot.data!.docs.map((DocumentSnapshot document){
+                                            Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
 
-                                          balance = (data['balance'] as int);
-                                          // setState((){});
-                                          print(balance);
+                                            balance = (data['balance'] as int);
+                                            // setState((){});
+                                            print(balance);
 
 
-                                          return Padding(
-                                            padding: const EdgeInsets.only(bottom: 4),
-                                            child: Container(
-                                              color: Colors.white,
+                                            return Padding(
+                                              padding: const EdgeInsets.only(bottom: 4),
+                                              child: Container(
+                                                color: Colors.white,
 
-                                              height: 100,
-                                              child: Row(
-                                                children: [
-                                                  Expanded(child: Padding(
-                                                    padding: const EdgeInsets.fromLTRB(16, 24, 8, 8),
-                                                    child: Container(
-                                                      child: Column(
-                                                        children: [
-                                                          Text(
-                                                              data['createdOn'] == null
-                                                                  ? DateTime.now().toString() : data['createdOn'].toDate().toString()
-                                                          ),
-                                                          Padding(
-                                                            padding: const EdgeInsets.all(8.0),
-                                                            child: Container(
-                                                                decoration: BoxDecoration(
-                                                                    color: Colors.black12,
-                                                                    borderRadius: BorderRadius.all(Radius.circular(4))
-                                                                ),
+                                                height: 100,
+                                                child: Row(
+                                                  children: [
+                                                    Expanded(child: Padding(
+                                                      padding: const EdgeInsets.fromLTRB(16, 24, 8, 8),
+                                                      child: Container(
+                                                        child: Column(
+                                                          children: [
+                                                            Text(
+                                                                data['createdOn'] == null
+                                                                    ? DateTime.now().toString() : data['createdOn'].toDate().toString()
+                                                            ),
+                                                            Padding(
+                                                              padding: const EdgeInsets.all(8.0),
+                                                              child: Container(
+                                                                  decoration: BoxDecoration(
+                                                                      color: Colors.black12,
+                                                                      borderRadius: BorderRadius.all(Radius.circular(4))
+                                                                  ),
 
-                                                                child: Padding(
-                                                                  padding: const EdgeInsets.symmetric(horizontal: 8),
-                                                                  child: Text('Bal. ₹ ${(data['balance'] as int).abs()}',
-                                                                  style: TextStyle(color: (data['balance'] as int)>=0
-                                                                  ? Colors.green : Colors.red),),
-                                                                )),
-                                                          )
-                                                        ],
+                                                                  child: Padding(
+                                                                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                                                                    child: Text('Bal. ₹ ${(data['balance'] as int).abs()}',
+                                                                    style: TextStyle(color:
+                                                                    data['uid'] == currentUserId
+                                                                        ?
+                                                                    ((data['balance'] as int)>=0
+                                                                    ? Colors.green : Colors.red)
+                                                                    : ((data['balance'] as int)>=0
+                                                                        ? Colors.red : Colors.green))
+                                                                      ,),
+                                                                  )),
+                                                            )
+                                                          ],
+                                                        ),
                                                       ),
                                                     ),
-                                                  ),
-                                                    flex: 1,),
-                                                  Expanded(child: Padding(
-                                                    padding: const EdgeInsets.fromLTRB(45, 25, 45, 50),
-                                                    child: Container(
+                                                      flex: 1,),
+                                                    Expanded(child: Padding(
+                                                      padding: const EdgeInsets.fromLTRB(45, 25, 45, 50),
+                                                      child: Container(
 
-                                                        child: Text('₹ ${(data['amount'] as int).abs()}' ,
-                                                          style: TextStyle(
-                                                              fontWeight: FontWeight.bold,
-                                                              fontSize: 18,
-                                                              color:
-                                                              (getALignment(data['uid'].toString(), data['bool']) == Alignment.centerLeft)
-                                                                  ? Colors.red : Colors.green
-                                                          ),),
-                                                        alignment: getALignment(data['uid'].toString(), data['bool'])
+                                                          child: Text('₹ ${(data['amount'] as int).abs()}' ,
+                                                            style: TextStyle(
+                                                                fontWeight: FontWeight.bold,
+                                                                fontSize: 18,
+                                                                color:
+                                                                (getALignment(data['uid'].toString(), data['bool']) == Alignment.centerLeft)
+                                                                    ? Colors.red : Colors.green
+                                                            ),),
+                                                          alignment: getALignment(data['uid'].toString(), data['bool'])
+                                                      ),
                                                     ),
-                                                  ),
-                                                    flex: 2,),
+                                                      flex: 2,),
 
-                                                ],
+                                                  ],
+                                                ),
                                               ),
-                                            ),
-                                          );
+                                            );
 
-                                        }).toList(),
-
+                                          }).toList(),
 
 
+
+                                        ),
                                       ),
-                                    ),
+                                ),
                               ),
                                   Flexible(
+                                    
 
                                     child: Container(
                                       height: MediaQuery.of(context).size.height*0.1,

@@ -38,7 +38,8 @@ abstract class _PageState with Store{
                     'time' : snapshot.docs.first['createdOn'],
                     'customerName': doc['name'],
                     'customerUid': snapshot.docs.first['uid'],
-                    'transactionPageId': doc['docid']
+                    'transactionPageId': doc['docid'],
+                    'isSender': snapshot.docs.first['bool'],
                   };
                 }
           });

@@ -27,6 +27,7 @@ class _HomeState extends State<Home> {
   int sum1 = 0;
   int sum2 = 0;
   int j = 1;
+  int k =0;
   var balances = [];
 
 
@@ -47,8 +48,7 @@ class _HomeState extends State<Home> {
 
     });
     pageState.refreshTransactionsForCurrentUser();
-    sum1 = 0;
-    sum2 = 0;
+
 
 
 
@@ -57,6 +57,10 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+    if(sum1 !=0 || sum2 !=0) {
+
+      k++;
+    }
 
     return DefaultTabController(
 
@@ -196,7 +200,7 @@ class _HomeState extends State<Home> {
 
                                       children: [
 
-                                        Text('₹ ${sum2/j}',
+                                        Text('₹ ${sum2/k}',
                                         style: TextStyle(
                                           color: Colors.green,
                                           fontWeight: FontWeight.bold,
@@ -220,7 +224,7 @@ class _HomeState extends State<Home> {
 
                                       children: [
 
-                                        Text('₹ ${sum1/j}',
+                                        Text('₹ ${sum1/k}',
                                           style: TextStyle(
                                               color: Colors.red,
                                               fontWeight: FontWeight.bold,
@@ -348,7 +352,7 @@ class _HomeState extends State<Home> {
                                           // balances[(data['customerUid'] as int)] = data['balance'];
                                           // print(balances[(data['customerUid'])]);
 
-                                          (data['balance'] as int)>=0 ? sum1+=((data['balance'] as int).abs()) : sum2+=((data['balance'] as int).abs()) ;
+                                          data['customerUid'] != user!.uid ?  ((data['balance'] as int)>=0 ? sum1+=((data['balance'] as int).abs()) : sum2+=((data['balance'] as int).abs())) :((data['balance'] as int)>=0 ? sum2+=((data['balance'] as int).abs()) : sum1+=((data['balance'] as int).abs()));
 
                                           return Column(
                                             children: [
@@ -361,13 +365,24 @@ class _HomeState extends State<Home> {
                                                   },
                                                   child: ListTile(
                                                     title:  Text(data['customerName'].toString(),),
-                                                    subtitle: (int.parse(data['balance'].toString()))>=0 ? null :
+                                                    subtitle: data['customerUid'] != user!.uid ? ((int.parse(data['balance'].toString()))<=0 ? null :
                                                     Row(
                                                       children: [
                                                         Icon(Icons.alarm, size: 18,),
                                                         Text(' Set due date')
                                                       ],
-                                                    ),
+                                                    ))
+                                                    :
+                                                    ((int.parse(data['balance'].toString()))<=0 ?
+                                                    Row(
+                                                      children: [
+                                                        Icon(Icons.alarm, size: 18,),
+                                                        Text(' Set due date')
+                                                      ],
+                                                    ) : null)
+
+
+                                                    ,
                                                     leading: CircleAvatar(
                                                       backgroundColor: Colors.black12,
                                                       child: Text('${data['customerName'].toString()[0].toUpperCase()}',
@@ -379,7 +394,7 @@ class _HomeState extends State<Home> {
                                                     ),
                                                     trailing: Text('₹ ${(int.parse(data['balance'].toString())).abs()}',
                                                       style: TextStyle(
-                                                          color: (int.parse(data['balance'].toString()))<=0 ? Colors.green : Colors.red
+                                                          color: data['customerUid'] != user!.uid ? ((int.parse(data['balance'].toString()))<=0 ? Colors.green : Colors.red) : ((int.parse(data['balance'].toString()))<=0 ? Colors.red : Colors.green)
                                                       ),),
                                                   ),
                                                 ),
