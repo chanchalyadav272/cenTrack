@@ -30,7 +30,7 @@ class _SignUpState extends State<SignUp> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: false,
-        title: Text('Khatabook',
+        title: Text('Tally Sheet',
 
           style: TextStyle(
               color: Colors.black,

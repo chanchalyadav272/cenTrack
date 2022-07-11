@@ -25,6 +25,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      title: 'Tally Sheet',
       debugShowCheckedModeBanner: false,
       routes: {
         '/login': (context) => Login(),
