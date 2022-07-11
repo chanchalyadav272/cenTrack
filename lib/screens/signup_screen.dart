@@ -30,7 +30,7 @@ class _SignUpState extends State<SignUp> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: false,
-        title: Text('Tally Sheet',
+        title: Text('cenTrack',
 
           style: TextStyle(
               color: Colors.black,

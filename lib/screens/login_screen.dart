@@ -32,7 +32,7 @@ class _LoginState extends State<Login> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: false,
-        title: Text('Tally Sheet',
+        title: Text('cenTrack',
         style: TextStyle(
           color: Colors.black,
           fontWeight: FontWeight.bold,
