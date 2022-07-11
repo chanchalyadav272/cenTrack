@@ -1,4 +1,4 @@
-# khatabook_clone
+# tally_sheet
 
 A new Flutter project.
 
