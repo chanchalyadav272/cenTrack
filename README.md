@@ -1,16 +1,10 @@
-# tally_sheet
+# cenTrack
 
-A new Flutter project.
+– A mobile application developed using Flutter framework which helps the user to keep track of his payments and dues with all registered users.
 
-## Getting Started
+– Used Firebase as back-end server along with Firestore database for authentication and storing information.
 
-This project is a starting point for a Flutter application.
+– Used MobX library to automatically refresh home page and show latest remaining balance for each registered user.
 
-A few resources to get you started if this is your first Flutter project:
+– Supported platforms: iOS & Android
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
