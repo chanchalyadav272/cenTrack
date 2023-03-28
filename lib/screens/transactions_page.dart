@@ -598,7 +598,7 @@ class _TransactionsState extends State<Transactions> {
                                       items: [
                                         BottomNavigationBarItem(icon: Icon(Icons.picture_as_pdf), label: ('Report'),),
                                         BottomNavigationBarItem(icon: Icon(Icons.currency_rupee_outlined), label: 'Payment'),
-                                        BottomNavigationBarItem(icon: Icon(Icons.whatsapp), label: 'Reminder'),
+                                        BottomNavigationBarItem(icon: Icon(Icons.notifications), label: 'Reminder'),
                                         BottomNavigationBarItem(icon: Icon(Icons.sms_outlined), label: 'SMS'),
 
 
